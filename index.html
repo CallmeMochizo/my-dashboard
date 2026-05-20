@@ -1,0 +1,659 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Antigravity Consistency AI</title>
+  
+  <!-- React & ReactDOM -->
+  <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
+  
+  <!-- Babel -->
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+          },
+          colors: {
+            appBg: '#e8e6e1',
+            dashBg: '#f4f0e6',
+            cardSand: '#dfd7cc',
+            cardDark: '#22252a',
+            accentYellow: '#ffcf54',
+            accentPink: '#ff8f8f',
+            textMain: '#1a1b1e',
+            textMuted: '#8b8a87',
+            darkApp: '#0d0f12',
+            darkDash: '#14161a',
+            darkCardSand: '#1c1e24',
+            darkCardDark: '#0a0c0e',
+            darkWhite: '#1a1c20',
+            darkInput: '#252830'
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    body {
+      transition: background-color 0.5s ease;
+    }
+    
+    .custom-scrollbar::-webkit-scrollbar {
+      width: 6px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-track {
+      background: transparent; 
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      background: rgba(0,0,0,0.1); 
+      border-radius: 10px;
+    }
+    .dark .custom-scrollbar::-webkit-scrollbar-thumb {
+      background: rgba(255,255,255,0.1); 
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+      background: rgba(0,0,0,0.2); 
+    }
+    
+    .dark-scrollbar::-webkit-scrollbar-thumb {
+      background: rgba(255,255,255,0.2); 
+    }
+    .dark-scrollbar::-webkit-scrollbar-thumb:hover {
+      background: rgba(255,255,255,0.3); 
+    }
+
+    /* Abstract shapes for the Sand Card */
+    .blob-yellow {
+      position: absolute;
+      width: 250px;
+      height: 250px;
+      background: radial-gradient(circle, rgba(255,207,84,0.8) 0%, rgba(255,207,84,0) 70%);
+      top: 50%;
+      right: 10%;
+      transform: translateY(-50%);
+      pointer-events: none;
+      z-index: 0;
+    }
+    .blob-pink {
+      position: absolute;
+      width: 200px;
+      height: 200px;
+      background: radial-gradient(circle, rgba(255,143,143,0.8) 0%, rgba(255,143,143,0) 70%);
+      bottom: -10%;
+      right: 40%;
+      pointer-events: none;
+      z-index: 0;
+    }
+    
+    .skeleton-line {
+      background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+      background-size: 200% 100%;
+      animation: loading 1.5s infinite;
+      border-radius: 4px;
+    }
+    .dark .skeleton-line {
+      background: linear-gradient(90deg, #333 25%, #444 50%, #333 75%);
+    }
+
+    .skeleton-line-dark {
+      background: linear-gradient(90deg, #333 25%, #444 50%, #333 75%);
+      background-size: 200% 100%;
+      animation: loading 1.5s infinite;
+      border-radius: 4px;
+    }
+
+    @keyframes loading {
+      0% { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
+    }
+
+    /* Apple-style smooth animations */
+    @keyframes appleSlideUp {
+      from {
+        opacity: 0;
+        transform: translateY(24px) scale(0.99);
+        filter: blur(8px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+        filter: blur(0);
+      }
+    }
+
+    .apple-enter {
+      animation: appleSlideUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+      opacity: 0;
+    }
+    
+    .apple-delay-1 { animation-delay: 0.1s; }
+    .apple-delay-2 { animation-delay: 0.2s; }
+    .apple-delay-3 { animation-delay: 0.3s; }
+    .apple-delay-4 { animation-delay: 0.4s; }
+
+    .apple-transition {
+      transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+  </style>
+</head>
+<body class="h-screen w-screen p-4 md:p-6 lg:p-8 flex items-center justify-center overflow-hidden bg-appBg dark:bg-darkApp text-textMain dark:text-gray-200">
+  
+  <div id="root" class="w-full max-w-[1600px] h-full max-h-[1000px] bg-dashBg dark:bg-darkDash rounded-[2.5rem] shadow-2xl flex p-6 gap-8 relative transition-colors duration-500"></div>
+
+  <script type="text/babel">
+    const { useState, useEffect, useRef } = React;
+
+    // --- Icons ---
+    const HomeIcon = () => <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>;
+    const ImagePlusIcon = () => <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" x2="12" y1="3" y2="15"/></svg>;
+    const LayersIcon = () => <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>;
+    const SettingsIcon = () => <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>;
+    const SearchIcon = () => <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>;
+    const CopyIcon = () => <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>;
+    const CheckIcon = () => <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 6 9 17l-5-5"/></svg>;
+    const TrashIcon = () => <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg>;
+    
+    // Additional Icons for Menu
+    const SunIcon = () => <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>;
+    const MoonIcon = () => <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>;
+    const CrownIcon = () => <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m2 4 3 12h14l3-12-6 7-4-7-4 7-6-7zm3 16h14"/></svg>;
+    const LogOutIcon = () => <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" x2="9" y1="12" y2="12"/></svg>;
+
+    // --- Services ---
+    const GOOGLE_API_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent';
+
+    async function callGoogle(apiKey, contents, systemInstruction) {
+      const response = await fetch(`${GOOGLE_API_URL}?key=${apiKey}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          system_instruction: {
+            parts: [{ text: systemInstruction }]
+          },
+          contents: contents,
+          generationConfig: {
+            responseMimeType: systemInstruction.includes("ONLY valid JSON") ? "application/json" : "text/plain"
+          }
+        })
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(`API Error: ${JSON.parse(errorText)?.error?.message || response.statusText}`);
+      }
+      return await response.json();
+    }
+
+    async function extractBlueprint(apiKey, base64Image, mediaType) {
+      const systemPrompt = `You are an expert image analyst. Extract the "Consistency Blueprint" of the provided image.
+Return ONLY valid JSON with no markdown formatting, no fences, and no preamble.
+The JSON must have the following keys exactly:
+- "subjectIdentity": full physical description.
+- "clothingAndAccessories": every garment and accessory.
+- "lightingSetup": direction, quality, shadow behavior.
+- "colorPalette": dominant colors, tone.
+- "artStyleAndMedium": medium, texture.
+- "cameraAndComposition": shot type, angle.
+- "environmentAndBackground": setting, background detail.`;
+
+      const contents = [
+        {
+          role: 'user',
+          parts: [
+            { inlineData: { mimeType: mediaType, data: base64Image } },
+            { text: 'Extract the consistency blueprint as structured JSON.' }
+          ]
+        }
+      ];
+
+      const data = await callGoogle(apiKey, contents, systemPrompt);
+      let textResponse = data.candidates[0].content.parts[0].text.trim();
+      if (textResponse.startsWith('```')) {
+        const firstNewline = textResponse.indexOf('\n');
+        const lastFence = textResponse.lastIndexOf('```');
+        textResponse = textResponse.substring(firstNewline !== -1 ? firstNewline : 3, lastFence !== -1 ? lastFence : textResponse.length);
+      }
+      return JSON.parse(textResponse);
+    }
+
+    async function generateAnglePrompt(apiKey, blueprint, angleRequest) {
+      const systemPrompt = `You are a consistency guardian for image generation. Translate a new angle request into a highly detailed image generation prompt, preserving complete visual identity from the provided Consistency Blueprint.
+
+Use this exact structure for your output (plain text):
+1. [SUBJECT IDENTITY ANCHOR]: Start with "The same [subject type] from the reference image:" and use every physical detail.
+2. [CLOTHING & ACCESSORIES ANCHOR]: List garments/accessories.
+3. [NEW ANGLE & CAMERA DIRECTION]: Describe the requested angle/scene precisely.
+4. [LIGHTING REPLICATION]: Use "Identical lighting to the reference:" and replicate setup.
+5. [COLOR PALETTE LOCK]: List colors and assert tone remains unchanged.
+6. [ART STYLE & MEDIUM LOCK]: Name style/medium and end with "Rendered in the same visual style and medium as the reference image."
+7. [ENVIRONMENT]: Describe background from the new angle.
+
+End your prompt exactly with these four lines:
+Character identity fully consistent with the reference image.
+No changes to facial features, skin tone, hair, or clothing.
+Same color grading, lighting mood, and artistic style throughout.
+High visual fidelity to source. This is the same individual/scene, different angle only.`;
+
+      const blueprintText = JSON.stringify(blueprint, null, 2);
+      const contents = [
+        { 
+          role: 'user', 
+          parts: [{ text: `CONSISTENCY BLUEPRINT:\n${blueprintText}\n\nUSER REQUEST: ${angleRequest}\n\nGenerate the complete prompt.` }] 
+        }
+      ];
+
+      const data = await callGoogle(apiKey, contents, systemPrompt);
+      return data.candidates[0].content.parts[0].text;
+    }
+
+    // --- App Component ---
+    const PresetAngles = [
+      "Front View", "Rear View", "Left Profile", "Right Profile", 
+      "Low Angle", "High Angle", "Close-Up Face", "Full Body"
+    ];
+
+    function App() {
+      const [apiKey, setApiKey] = useState('AIzaSyDryjp9aSdDS4jv2S47HYAOLvcgDtgZOHc');
+      const [isKeySet, setIsKeySet] = useState(true);
+      
+      const [uploadedImage, setUploadedImage] = useState(null);
+      const [mediaType, setMediaType] = useState(null);
+      const [blueprint, setBlueprint] = useState(null);
+      
+      const [angleRequest, setAngleRequest] = useState('');
+      const [currentPrompt, setCurrentPrompt] = useState(null);
+      
+      const [isAnalyzing, setIsAnalyzing] = useState(false);
+      const [isGenerating, setIsGenerating] = useState(false);
+      const [error, setError] = useState(null);
+      const [copied, setCopied] = useState(false);
+
+      // New State variables
+      const [isProfileOpen, setIsProfileOpen] = useState(false);
+      const [isDarkMode, setIsDarkMode] = useState(false);
+
+      // Close profile menu when clicking outside
+      const profileMenuRef = useRef(null);
+      useEffect(() => {
+        function handleClickOutside(event) {
+          if (profileMenuRef.current && !profileMenuRef.current.contains(event.target)) {
+            setIsProfileOpen(false);
+          }
+        }
+        document.addEventListener("mousedown", handleClickOutside);
+        return () => document.removeEventListener("mousedown", handleClickOutside);
+      }, [profileMenuRef]);
+
+      const toggleDarkMode = () => {
+        setIsDarkMode(!isDarkMode);
+        if (!isDarkMode) {
+          document.documentElement.classList.add('dark');
+        } else {
+          document.documentElement.classList.remove('dark');
+        }
+      };
+
+      const handleImageUpload = (e) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = async (event) => {
+          const base64Full = event.target.result;
+          const mimeType = base64Full.split(';')[0].split(':')[1];
+          const base64Data = base64Full.split(',')[1];
+          
+          setUploadedImage(base64Full);
+          setMediaType(mimeType);
+          setBlueprint(null);
+          setCurrentPrompt(null);
+          setError(null);
+          
+          if (!isKeySet || !apiKey) {
+            setError("Please save your Google API Key first.");
+            return;
+          }
+
+          setIsAnalyzing(true);
+          try {
+            const bp = await extractBlueprint(apiKey, base64Data, mimeType);
+            setBlueprint(bp);
+          } catch (err) {
+            setError(err.message);
+          } finally {
+            setIsAnalyzing(false);
+          }
+        };
+        reader.readAsDataURL(file);
+      };
+
+      const handleGenerate = async () => {
+        if (!blueprint || !angleRequest.trim()) return;
+        setIsGenerating(true);
+        setError(null);
+        setCurrentPrompt(null);
+        setCopied(false);
+        try {
+          const prompt = await generateAnglePrompt(apiKey, blueprint, angleRequest);
+          setCurrentPrompt(prompt);
+        } catch (err) {
+          setError(err.message);
+        } finally {
+          setIsGenerating(false);
+        }
+      };
+
+      const copyToClipboard = () => {
+        if (currentPrompt) {
+          navigator.clipboard.writeText(currentPrompt);
+          setCopied(true);
+          setTimeout(() => setCopied(false), 2000);
+        }
+      };
+
+      const formatKey = (key) => {
+        const formatted = key.replace(/([A-Z])/g, ' $1');
+        return formatted.charAt(0).toUpperCase() + formatted.slice(1);
+      };
+
+      return (
+        <React.Fragment>
+          {/* Floating Sidebar */}
+          <div className="w-20 shrink-0 flex flex-col justify-between py-2 apple-enter relative z-[100]">
+            <div className="bg-white dark:bg-darkWhite rounded-[2rem] py-6 flex flex-col items-center gap-8 shadow-sm transition-colors duration-500">
+              <div className="w-12 h-12 bg-cardDark dark:bg-darkCardDark rounded-full flex items-center justify-center text-accentYellow shadow-md cursor-pointer transition-colors duration-500">
+                 <HomeIcon />
+              </div>
+              <div className="text-gray-400 hover:text-textMain dark:hover:text-white cursor-pointer transition-colors">
+                <LayersIcon />
+              </div>
+              <div className="text-gray-400 hover:text-textMain dark:hover:text-white cursor-pointer transition-colors">
+                <ImagePlusIcon />
+              </div>
+              <div className="text-gray-400 hover:text-textMain dark:hover:text-white cursor-pointer transition-colors">
+                <SettingsIcon />
+              </div>
+            </div>
+            
+            {/* Profile Dropdown Container */}
+            <div className="relative" ref={profileMenuRef}>
+              <div 
+                onClick={() => setIsProfileOpen(!isProfileOpen)}
+                className="bg-white/80 dark:bg-darkWhite/80 backdrop-blur-xl rounded-[2rem] py-4 flex flex-col items-center shadow-sm cursor-pointer hover:bg-white dark:hover:bg-darkWhite apple-transition hover:scale-105 active:scale-95"
+              >
+                 <div className="w-10 h-10 rounded-full overflow-hidden border-2 border-dashBg dark:border-darkInput">
+                   <img src="https://api.dicebear.com/7.x/notionists/svg?seed=Felix&backgroundColor=ffcf54" alt="Avatar" />
+                 </div>
+              </div>
+
+              {isProfileOpen && (
+                <div className="absolute bottom-0 left-20 ml-4 w-60 bg-white/95 dark:bg-darkWhite/95 backdrop-blur-xl rounded-[1.5rem] p-3 shadow-2xl border border-gray-100 dark:border-white/5 apple-enter z-50 transition-colors duration-500">
+                   <div className="px-3 py-2 mb-2 border-b border-gray-100 dark:border-gray-800">
+                     <p className="text-[14px] font-bold text-textMain dark:text-white">Vishnu Sharma</p>
+                     <p className="text-[12px] font-medium text-textMuted">Free Tier</p>
+                   </div>
+                   
+                   <button className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-dashBg dark:hover:bg-darkInput text-textMain dark:text-white text-[13px] font-semibold apple-transition">
+                     <SettingsIcon className="w-4 h-4 text-gray-400" />
+                     Settings
+                   </button>
+                   
+                   <button onClick={toggleDarkMode} className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-dashBg dark:hover:bg-darkInput text-textMain dark:text-white text-[13px] font-semibold apple-transition">
+                     {isDarkMode ? <SunIcon /> : <MoonIcon />}
+                     {isDarkMode ? 'Light Mode' : 'Night Mode'}
+                   </button>
+
+                   <button className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-accentYellow/10 dark:hover:bg-accentYellow/10 text-amber-500 text-[13px] font-bold apple-transition mt-1">
+                     <CrownIcon />
+                     Upgrade to Premium
+                   </button>
+                   
+                   <button className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-red-50 dark:hover:bg-red-500/10 text-red-500 text-[13px] font-semibold apple-transition mt-2 border-t border-gray-100 dark:border-gray-800 pt-3">
+                     <LogOutIcon />
+                     Log Out
+                   </button>
+                </div>
+              )}
+            </div>
+          </div>
+          
+          {/* Main Content Container */}
+          <div className="flex-1 flex flex-col h-full overflow-hidden ml-2 apple-enter apple-delay-1">
+            
+            {/* Header */}
+            <div className="flex justify-between items-end mb-6 shrink-0">
+              <div>
+                <h1 className="text-[28px] font-bold text-textMain dark:text-white leading-tight">Consistency Studio</h1>
+                <p className="text-textMuted text-[15px] font-medium mt-1">Extract styles and generate perfect multi-angle shots</p>
+              </div>
+              
+              <div className="flex gap-3 items-center">
+                {!isKeySet ? (
+                  <React.Fragment>
+                    <div className="bg-white dark:bg-darkWhite rounded-full px-5 py-3 flex items-center shadow-sm border border-transparent focus-within:border-gray-200 dark:focus-within:border-gray-700 transition-colors">
+                       <SearchIcon className="text-gray-400 mr-3"/>
+                       <input 
+                         type="password" 
+                         placeholder="Google API Key (AIza...)" 
+                         className="bg-transparent border-none outline-none text-[15px] w-64 placeholder-gray-400 text-textMain dark:text-white"
+                         value={apiKey}
+                         onChange={(e) => setApiKey(e.target.value)}
+                       />
+                    </div>
+                    <button 
+                      onClick={() => apiKey.length > 10 && setIsKeySet(true)}
+                      className="bg-cardDark dark:bg-darkInput text-white px-7 py-3 rounded-full text-[15px] font-semibold hover:bg-black dark:hover:bg-gray-800 apple-transition shadow-md hover:shadow-lg hover:scale-105 active:scale-95"
+                    >
+                      Save Key
+                    </button>
+                  </React.Fragment>
+                ) : (
+                  <div className="flex items-center gap-4 bg-white dark:bg-darkWhite rounded-full pl-5 pr-2 py-1.5 shadow-sm transition-colors duration-500">
+                    <span className="text-[15px] font-semibold text-textMain dark:text-white flex items-center gap-2">
+                      <div className="w-2 h-2 rounded-full bg-green-500"></div> API Active
+                    </span>
+                    <button 
+                      onClick={() => setIsKeySet(false)}
+                      className="bg-dashBg dark:bg-darkInput text-textMain dark:text-white px-4 py-2 rounded-full text-[13px] font-bold hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
+                    >
+                      Edit
+                    </button>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {error && (
+              <div className="mb-4 bg-red-100 dark:bg-red-500/10 text-red-700 dark:text-red-400 px-5 py-3 rounded-2xl text-[15px] font-medium border border-red-200 dark:border-red-500/20 flex items-center justify-between shrink-0">
+                <span>{error}</span>
+                <button onClick={() => setError(null)} className="hover:text-red-900 dark:hover:text-red-300"><TrashIcon /></button>
+              </div>
+            )}
+            
+            {/* Scrollable Dashboard Grid */}
+            <div className="flex-1 overflow-auto custom-scrollbar pr-4 pb-4">
+              <div className="grid grid-cols-1 xl:grid-cols-12 gap-6 auto-rows-min">
+                
+                {/* TOP LEFT: Upload & Reference (Sand Card) */}
+                <div className="xl:col-span-7 bg-cardSand dark:bg-darkCardSand rounded-[2rem] p-8 flex flex-col relative overflow-hidden shadow-sm min-h-[360px] z-10 group apple-enter apple-delay-2 apple-transition hover:shadow-lg hover:-translate-y-1 transition-colors duration-500">
+                  <div className="blob-yellow"></div>
+                  <div className="blob-pink"></div>
+                  
+                  <div className="relative z-10 flex flex-col h-full">
+                    <div className="flex justify-between items-center mb-6">
+                      <h2 className="text-xl font-bold text-[#3f3b35] dark:text-white">Reference Image</h2>
+                      {uploadedImage && (
+                        <button 
+                          onClick={() => { setUploadedImage(null); setBlueprint(null); setCurrentPrompt(null); }}
+                          className="bg-white/50 dark:bg-darkWhite/50 hover:bg-white/80 dark:hover:bg-darkWhite/80 text-[#3f3b35] dark:text-white p-2 rounded-full backdrop-blur-sm transition-colors"
+                        >
+                          <TrashIcon />
+                        </button>
+                      )}
+                    </div>
+                    
+                    <div 
+                      className={`flex-1 rounded-[1.5rem] border-2 border-dashed ${uploadedImage ? 'border-transparent bg-transparent' : 'border-[#b8b0a3] dark:border-gray-600 hover:border-[#3f3b35] dark:hover:border-white bg-white/30 dark:bg-darkInput/30 backdrop-blur-sm'} flex flex-col items-center justify-center text-center transition-all cursor-pointer relative overflow-hidden`}
+                      onDragOver={(e) => e.preventDefault()}
+                      onDrop={(e) => { e.preventDefault(); handleImageUpload(e); }}
+                    >
+                      <input 
+                        type="file" 
+                        accept="image/jpeg, image/png, image/webp" 
+                        className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-20" 
+                        onChange={handleImageUpload} 
+                        title=""
+                      />
+                      
+                      {uploadedImage ? (
+                        <img src={uploadedImage} alt="Reference" className="w-full h-full object-contain drop-shadow-xl" />
+                      ) : (
+                        <div className="flex flex-col items-center p-8 pointer-events-none text-[#5c564d] dark:text-gray-300">
+                          <div className="w-16 h-16 bg-white dark:bg-darkInput rounded-full flex items-center justify-center mb-4 shadow-sm text-cardDark dark:text-white">
+                            <ImagePlusIcon />
+                          </div>
+                          <h3 className="font-bold text-lg mb-1">Upload Reference</h3>
+                          <p className="text-[14px] font-medium opacity-80">Drag & drop or click to browse</p>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+                
+                {/* TOP RIGHT: Output Prompt (Dark Card) */}
+                <div className="xl:col-span-5 bg-cardDark dark:bg-darkCardDark rounded-[2rem] p-8 text-white flex flex-col shadow-xl min-h-[360px] apple-enter apple-delay-3 apple-transition hover:shadow-2xl hover:-translate-y-1 transition-colors duration-500">
+                  <div className="flex justify-between items-center mb-6">
+                    <h2 className="text-xl font-bold">Generated Prompt</h2>
+                    {currentPrompt && (
+                      <button 
+                        onClick={copyToClipboard}
+                        className="bg-[#383a40] hover:bg-[#4b4e55] dark:bg-[#1a1c20] dark:hover:bg-[#252830] text-white px-4 py-2 rounded-full text-[13px] font-bold transition-colors flex items-center gap-2"
+                      >
+                        {copied ? <React.Fragment><CheckIcon/> Copied</React.Fragment> : <React.Fragment><CopyIcon/> Copy text</React.Fragment>}
+                      </button>
+                    )}
+                  </div>
+                  
+                  <div className="flex-1 bg-[#1a1c1f] dark:bg-[#15171a] rounded-[1.5rem] p-6 overflow-auto dark-scrollbar border border-[#2f3238] dark:border-gray-800">
+                    {isGenerating ? (
+                      <div className="space-y-4">
+                        <div className="h-3 w-3/4 skeleton-line-dark"></div>
+                        <div className="h-3 w-full skeleton-line-dark"></div>
+                        <div className="h-3 w-5/6 skeleton-line-dark"></div>
+                        <div className="h-3 w-2/3 skeleton-line-dark"></div>
+                        <div className="h-3 w-full skeleton-line-dark mt-6"></div>
+                        <div className="h-3 w-4/5 skeleton-line-dark"></div>
+                      </div>
+                    ) : currentPrompt ? (
+                      <p className="text-[14px] leading-relaxed text-gray-300 whitespace-pre-wrap selection:bg-accentYellow selection:text-black">
+                        {currentPrompt}
+                      </p>
+                    ) : (
+                      <div className="h-full flex flex-col items-center justify-center text-[#555a64]">
+                        <div className="w-12 h-12 rounded-full border-2 border-[#383a40] dark:border-gray-800 flex items-center justify-center mb-3">
+                          <LayersIcon />
+                        </div>
+                        <span className="text-[14px] font-medium">Prompt will appear here</span>
+                      </div>
+                    )}
+                  </div>
+                </div>
+                
+                {/* BOTTOM LEFT: Consistency Blueprint (White Card) */}
+                <div className="xl:col-span-7 bg-white/90 dark:bg-darkWhite/90 backdrop-blur-md rounded-[2rem] p-8 shadow-sm flex flex-col min-h-[400px] apple-enter apple-delay-3 apple-transition hover:shadow-lg hover:-translate-y-1 transition-colors duration-500">
+                  <div className="flex justify-between items-center mb-6">
+                    <h2 className="text-xl font-bold text-textMain dark:text-white flex items-center gap-3">
+                      Extracted Blueprint
+                      {isAnalyzing && <span className="bg-accentYellow/20 text-[#b58500] dark:text-accentYellow text-[12px] px-3 py-1 rounded-full font-bold animate-pulse">Analyzing...</span>}
+                    </h2>
+                  </div>
+                  
+                  <div className="flex-1 overflow-auto custom-scrollbar pr-2 grid grid-cols-1 md:grid-cols-2 gap-4 auto-rows-max content-start">
+                    {isAnalyzing ? (
+                      Array(6).fill(0).map((_, i) => (
+                        <div key={i} className="bg-dashBg dark:bg-darkInput rounded-2xl p-5 border border-transparent">
+                           <div className="h-3 w-1/3 skeleton-line mb-3"></div>
+                           <div className="h-2 w-full skeleton-line mb-2"></div>
+                           <div className="h-2 w-4/5 skeleton-line"></div>
+                        </div>
+                      ))
+                    ) : blueprint ? (
+                      Object.entries(blueprint).map(([key, value]) => (
+                        <div key={key} className="bg-dashBg dark:bg-darkInput rounded-2xl p-5 hover:bg-gray-100 dark:hover:bg-[#2a2d36] transition-colors border border-transparent">
+                          <h4 className="text-[13px] font-bold text-textMain dark:text-white mb-1.5 flex items-center gap-2">
+                            <div className="w-1.5 h-1.5 rounded-full bg-accentYellow"></div>
+                            {formatKey(key)}
+                          </h4>
+                          <p className="text-[14px] text-textMuted dark:text-gray-400 leading-snug line-clamp-3 hover:line-clamp-none transition-all">{value}</p>
+                        </div>
+                      ))
+                    ) : (
+                      <div className="col-span-1 md:col-span-2 h-full min-h-[200px] flex items-center justify-center text-textMuted dark:text-gray-400 text-[14px] font-medium bg-dashBg dark:bg-darkInput rounded-[1.5rem] border-2 border-dashed border-gray-200 dark:border-gray-700">
+                        Upload an image to extract visual attributes
+                      </div>
+                    )}
+                  </div>
+                </div>
+                
+                {/* BOTTOM RIGHT: Angle Request (White Card) */}
+                <div className="xl:col-span-5 bg-white/90 dark:bg-darkWhite/90 backdrop-blur-md rounded-[2rem] p-8 shadow-sm flex flex-col min-h-[400px] apple-enter apple-delay-4 apple-transition hover:shadow-lg hover:-translate-y-1 transition-colors duration-500">
+                  <h2 className="text-xl font-bold text-textMain dark:text-white mb-6">Request New Angle</h2>
+                  
+                  <div className="flex flex-wrap gap-2 mb-5">
+                    {PresetAngles.map(angle => (
+                      <button 
+                        key={angle}
+                        onClick={() => setAngleRequest(angle)}
+                        className={`text-[13px] font-semibold px-4 py-2 rounded-full transition-all ${angleRequest === angle ? 'bg-cardDark dark:bg-darkInput text-white shadow-md scale-105' : 'bg-dashBg dark:bg-darkInput text-textMuted dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700 hover:text-textMain dark:hover:text-white'}`}
+                      >
+                        {angle}
+                      </button>
+                    ))}
+                  </div>
+
+                  <textarea 
+                    value={angleRequest}
+                    onChange={(e) => setAngleRequest(e.target.value)}
+                    placeholder="Describe specific changes (e.g. 'cinematic close up of the face, looking left')..."
+                    className="flex-1 w-full bg-dashBg dark:bg-darkInput rounded-[1.5rem] p-5 text-[15px] font-medium text-textMain dark:text-white focus:outline-none focus:ring-2 focus:ring-accentYellow resize-none custom-scrollbar placeholder-gray-400 dark:placeholder-gray-500 mb-5 transition-colors duration-500"
+                    disabled={!blueprint}
+                  />
+
+                  <button 
+                    onClick={handleGenerate}
+                    disabled={!blueprint || !angleRequest.trim() || isGenerating}
+                    className="w-full bg-accentYellow hover:bg-[#f7c236] disabled:bg-dashBg dark:disabled:bg-darkInput disabled:text-gray-400 dark:disabled:text-gray-600 text-cardDark font-bold py-4 rounded-full apple-transition text-[16px] shadow-sm hover:shadow-md hover:scale-[1.02] active:scale-[0.98]"
+                  >
+                    {isGenerating ? 'Generating Prompt...' : 'Generate Perfect Prompt'}
+                  </button>
+                </div>
+
+              </div>
+            </div>
+          </div>
+        </React.Fragment>
+      );
+    }
+
+    const root = ReactDOM.createRoot(document.getElementById('root'));
+    root.render(<App />);
+  </script>
+</body>
+</html>
