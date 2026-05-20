@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Antigravity Consistency AI</title>
+  <title>Consistency Studio</title>
   
   <!-- React & ReactDOM -->
   <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
@@ -23,20 +23,10 @@
             sans: ['"Plus Jakarta Sans"', 'sans-serif'],
           },
           colors: {
-            appBg: '#e8e6e1',
-            dashBg: '#f4f0e6',
-            cardSand: '#dfd7cc',
-            cardDark: '#22252a',
-            accentYellow: '#ffcf54',
-            accentPink: '#ff8f8f',
-            textMain: '#1a1b1e',
-            textMuted: '#8b8a87',
-            darkApp: '#0d0f12',
-            darkDash: '#14161a',
-            darkCardSand: '#1c1e24',
-            darkCardDark: '#0a0c0e',
-            darkWhite: '#1a1c20',
-            darkInput: '#252830'
+            appBg: '#e8e6e1', dashBg: '#f4f0e6', cardSand: '#dfd7cc', cardDark: '#22252a',
+            accentYellow: '#ffcf54', accentPink: '#ff8f8f', textMain: '#1a1b1e', textMuted: '#8b8a87',
+            darkApp: '#0d0f12', darkDash: '#14161a', darkCardSand: '#1c1e24', darkCardDark: '#0a0c0e',
+            darkWhite: '#1a1c20', darkInput: '#252830'
           }
         }
       }
@@ -49,111 +39,68 @@
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
   <style>
-    body {
-      transition: background-color 0.5s ease;
-    }
+    body { transition: background-color 0.5s ease; }
     
-    .custom-scrollbar::-webkit-scrollbar {
-      width: 6px;
-    }
-    .custom-scrollbar::-webkit-scrollbar-track {
-      background: transparent; 
-    }
-    .custom-scrollbar::-webkit-scrollbar-thumb {
-      background: rgba(0,0,0,0.1); 
-      border-radius: 10px;
-    }
-    .dark .custom-scrollbar::-webkit-scrollbar-thumb {
-      background: rgba(255,255,255,0.1); 
-    }
-    .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-      background: rgba(0,0,0,0.2); 
-    }
+    .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+    .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+    .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.1); border-radius: 10px; }
+    .dark .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); }
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: rgba(0,0,0,0.2); }
     
-    .dark-scrollbar::-webkit-scrollbar-thumb {
-      background: rgba(255,255,255,0.2); 
-    }
-    .dark-scrollbar::-webkit-scrollbar-thumb:hover {
-      background: rgba(255,255,255,0.3); 
-    }
+    .dark-scrollbar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); }
+    .dark-scrollbar::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.3); }
 
-    /* Abstract shapes for the Sand Card */
-    .blob-yellow {
-      position: absolute;
-      width: 250px;
-      height: 250px;
-      background: radial-gradient(circle, rgba(255,207,84,0.8) 0%, rgba(255,207,84,0) 70%);
-      top: 50%;
-      right: 10%;
-      transform: translateY(-50%);
-      pointer-events: none;
-      z-index: 0;
-    }
-    .blob-pink {
-      position: absolute;
-      width: 200px;
-      height: 200px;
-      background: radial-gradient(circle, rgba(255,143,143,0.8) 0%, rgba(255,143,143,0) 70%);
-      bottom: -10%;
-      right: 40%;
-      pointer-events: none;
-      z-index: 0;
-    }
+    .blob-yellow { position: absolute; width: 250px; height: 250px; background: radial-gradient(circle, rgba(255,207,84,0.8) 0%, rgba(255,207,84,0) 70%); top: 50%; right: 10%; transform: translateY(-50%); pointer-events: none; z-index: 0; }
+    .blob-pink { position: absolute; width: 200px; height: 200px; background: radial-gradient(circle, rgba(255,143,143,0.8) 0%, rgba(255,143,143,0) 70%); bottom: -10%; right: 40%; pointer-events: none; z-index: 0; }
     
-    .skeleton-line {
-      background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
-      background-size: 200% 100%;
-      animation: loading 1.5s infinite;
-      border-radius: 4px;
-    }
-    .dark .skeleton-line {
-      background: linear-gradient(90deg, #333 25%, #444 50%, #333 75%);
-    }
+    .skeleton-line { background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%); background-size: 200% 100%; animation: loading 1.5s infinite; border-radius: 4px; }
+    .dark .skeleton-line { background: linear-gradient(90deg, #333 25%, #444 50%, #333 75%); }
+    .skeleton-line-dark { background: linear-gradient(90deg, #333 25%, #444 50%, #333 75%); background-size: 200% 100%; animation: loading 1.5s infinite; border-radius: 4px; }
 
-    .skeleton-line-dark {
-      background: linear-gradient(90deg, #333 25%, #444 50%, #333 75%);
-      background-size: 200% 100%;
-      animation: loading 1.5s infinite;
-      border-radius: 4px;
-    }
+    @keyframes loading { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+    @keyframes appleSlideUp { from { opacity: 0; transform: translateY(24px) scale(0.99); filter: blur(8px); } to { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); } }
 
-    @keyframes loading {
-      0% { background-position: 200% 0; }
-      100% { background-position: -200% 0; }
-    }
-
-    /* Apple-style smooth animations */
-    @keyframes appleSlideUp {
-      from {
-        opacity: 0;
-        transform: translateY(24px) scale(0.99);
-        filter: blur(8px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0) scale(1);
-        filter: blur(0);
-      }
-    }
-
-    .apple-enter {
-      animation: appleSlideUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-      opacity: 0;
-    }
-    
+    .apple-enter { animation: appleSlideUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards; opacity: 0; }
     .apple-delay-1 { animation-delay: 0.1s; }
     .apple-delay-2 { animation-delay: 0.2s; }
     .apple-delay-3 { animation-delay: 0.3s; }
     .apple-delay-4 { animation-delay: 0.4s; }
-
-    .apple-transition {
-      transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-    }
+    .apple-transition { transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
   </style>
+
+  <!-- Firebase Setup -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+    import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+    import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyDuOT_uWLujxe_aIGALS74JlWnpU6amYHO",
+      authDomain: "prompt-master-adc73.firebaseapp.com",
+      projectId: "prompt-master-adc73",
+      storageBucket: "prompt-master-adc73.firebasestorage.app",
+      messagingSenderId: "62044257187",
+      appId: "1:62044257187:web:d7a94ea222cfe2984f816",
+      measurementId: "G-E3C5M5V0X3"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    window.firebaseAuth = getAuth(app);
+    window.firebaseDb = getFirestore(app);
+    window.GoogleAuthProvider = GoogleAuthProvider;
+    window.signInWithPopup = signInWithPopup;
+    window.onAuthStateChanged = onAuthStateChanged;
+    window.signOut = signOut;
+    window.firebaseDoc = doc;
+    window.setDoc = setDoc;
+    window.getDoc = getDoc;
+
+    window.dispatchEvent(new Event('firebase-ready'));
+  </script>
 </head>
-<body class="h-screen w-screen p-4 md:p-6 lg:p-8 flex items-center justify-center overflow-hidden bg-appBg dark:bg-darkApp text-textMain dark:text-gray-200">
+<body class="h-screen w-screen p-4 md:p-6 lg:p-8 flex items-center justify-center overflow-hidden bg-appBg dark:bg-darkApp text-textMain dark:text-gray-200 transition-colors duration-500">
   
-  <div id="root" class="w-full max-w-[1600px] h-full max-h-[1000px] bg-dashBg dark:bg-darkDash rounded-[2.5rem] shadow-2xl flex p-6 gap-8 relative transition-colors duration-500"></div>
+  <div id="root" class="w-full max-w-[1600px] h-full max-h-[1000px] bg-dashBg dark:bg-darkDash rounded-[2.5rem] shadow-2xl flex relative transition-colors duration-500 overflow-hidden"></div>
 
   <script type="text/babel">
     const { useState, useEffect, useRef } = React;
@@ -167,12 +114,11 @@
     const CopyIcon = () => <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>;
     const CheckIcon = () => <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 6 9 17l-5-5"/></svg>;
     const TrashIcon = () => <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg>;
-    
-    // Additional Icons for Menu
     const SunIcon = () => <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>;
     const MoonIcon = () => <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>;
     const CrownIcon = () => <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m2 4 3 12h14l3-12-6 7-4-7-4 7-6-7zm3 16h14"/></svg>;
     const LogOutIcon = () => <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" x2="9" y1="12" y2="12"/></svg>;
+    const CloudIcon = () => <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"/></svg>;
 
     // --- Services ---
     const GOOGLE_API_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent';
@@ -180,17 +126,11 @@
     async function callGoogle(apiKey, contents, systemInstruction) {
       const response = await fetch(`${GOOGLE_API_URL}?key=${apiKey}`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          system_instruction: {
-            parts: [{ text: systemInstruction }]
-          },
+          system_instruction: { parts: [{ text: systemInstruction }] },
           contents: contents,
-          generationConfig: {
-            responseMimeType: systemInstruction.includes("ONLY valid JSON") ? "application/json" : "text/plain"
-          }
+          generationConfig: { responseMimeType: systemInstruction.includes("ONLY valid JSON") ? "application/json" : "text/plain" }
         })
       });
 
@@ -252,24 +192,86 @@ Same color grading, lighting mood, and artistic style throughout.
 High visual fidelity to source. This is the same individual/scene, different angle only.`;
 
       const blueprintText = JSON.stringify(blueprint, null, 2);
-      const contents = [
-        { 
-          role: 'user', 
-          parts: [{ text: `CONSISTENCY BLUEPRINT:\n${blueprintText}\n\nUSER REQUEST: ${angleRequest}\n\nGenerate the complete prompt.` }] 
-        }
-      ];
-
+      const contents = [{ role: 'user', parts: [{ text: `CONSISTENCY BLUEPRINT:\n${blueprintText}\n\nUSER REQUEST: ${angleRequest}\n\nGenerate the complete prompt.` }] }];
       const data = await callGoogle(apiKey, contents, systemPrompt);
       return data.candidates[0].content.parts[0].text;
     }
 
-    // --- App Component ---
-    const PresetAngles = [
-      "Front View", "Rear View", "Left Profile", "Right Profile", 
-      "Low Angle", "High Angle", "Close-Up Face", "Full Body"
-    ];
+    const PresetAngles = ["Front View", "Rear View", "Left Profile", "Right Profile", "Low Angle", "High Angle", "Close-Up Face", "Full Body"];
 
-    function App() {
+    // --- Components ---
+
+    function Landing({ onGetStarted }) {
+      return (
+        <div className="flex-1 flex flex-col items-center justify-center text-center p-8 apple-enter">
+           <div className="w-24 h-24 bg-cardDark dark:bg-darkCardDark rounded-full flex items-center justify-center text-accentYellow shadow-2xl mb-8">
+             <LayersIcon />
+           </div>
+           <h1 className="text-5xl md:text-6xl font-extrabold tracking-tight mb-6 text-textMain dark:text-white">Consistency Studio</h1>
+           <p className="text-xl text-textMuted dark:text-gray-400 max-w-2xl mb-12 font-medium">
+             The ultimate AI workspace for extracting visual blueprints and generating perfect multi-angle shots.
+           </p>
+           <button 
+             onClick={onGetStarted}
+             className="bg-accentYellow text-cardDark px-10 py-4 rounded-full text-lg font-bold shadow-xl hover:shadow-2xl hover:scale-105 active:scale-95 apple-transition"
+           >
+             Get Started
+           </button>
+        </div>
+      );
+    }
+
+    function Login({ onBack }) {
+      const [loading, setLoading] = useState(false);
+      const [error, setError] = useState(null);
+
+      const handleGoogleSignIn = async () => {
+        setLoading(true);
+        setError(null);
+        try {
+          const provider = new window.GoogleAuthProvider();
+          await window.signInWithPopup(window.firebaseAuth, provider);
+        } catch (err) {
+          setError(err.message);
+          setLoading(false);
+        }
+      };
+
+      return (
+        <div className="flex-1 flex items-center justify-center p-8 apple-enter relative w-full h-full">
+          <button onClick={onBack} className="absolute top-10 left-10 text-textMuted hover:text-textMain dark:hover:text-white font-bold text-lg apple-transition">
+            ← Back
+          </button>
+          
+          <div className="bg-white/80 dark:bg-darkWhite/80 backdrop-blur-xl p-10 rounded-[2.5rem] shadow-2xl w-full max-w-md text-center border border-white/20 dark:border-white/5">
+            <h2 className="text-3xl font-bold mb-3 text-textMain dark:text-white">Welcome Back</h2>
+            <p className="text-textMuted dark:text-gray-400 mb-8 font-medium">Sign in to sync your workspace securely across all devices.</p>
+            
+            {error && <p className="text-red-500 text-sm mb-4 bg-red-50 p-3 rounded-lg">{error}</p>}
+
+            <button 
+              onClick={handleGoogleSignIn}
+              disabled={loading}
+              className="w-full bg-cardDark dark:bg-darkInput text-white px-6 py-4 rounded-full text-base font-bold shadow-md hover:shadow-lg hover:scale-[1.02] active:scale-95 apple-transition flex items-center justify-center gap-3 disabled:opacity-70 disabled:scale-100"
+            >
+              {loading ? 'Authenticating...' : (
+                <React.Fragment>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 48 48">
+                    <path fill="#FFC107" d="M43.611,20.083H42V20H24v8h11.303c-1.649,4.657-6.08,8-11.303,8c-6.627,0-12-5.373-12-12c0-6.627,5.373-12,12-12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C12.955,4,4,12.955,4,24c0,11.045,8.955,20,20,20c11.045,0,20-8.955,20-20C44,22.659,43.862,21.35,43.611,20.083z"/>
+                    <path fill="#FF3D00" d="M6.306,14.691l6.571,4.819C14.655,15.108,18.961,12,24,12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C16.318,4,9.656,8.337,6.306,14.691z"/>
+                    <path fill="#4CAF50" d="M24,44c5.166,0,9.86-1.977,13.409-5.192l-6.19-5.238C29.211,35.091,26.715,36,24,36c-5.202,0-9.619-3.317-11.283-7.946l-6.522,5.025C9.505,39.556,16.227,44,24,44z"/>
+                    <path fill="#1976D2" d="M43.611,20.083H42V20H24v8h11.303c-0.792,2.237-2.231,4.166-4.087,5.571c0.001-0.001,0.002-0.001,0.003-0.002l6.19,5.238C36.971,39.205,44,34,44,24C44,22.659,43.862,21.35,43.611,20.083z"/>
+                  </svg>
+                  Sign in with Google
+                </React.Fragment>
+              )}
+            </button>
+          </div>
+        </div>
+      );
+    }
+
+    function Dashboard({ user, onLogout }) {
       const [apiKey, setApiKey] = useState('AIzaSyDryjp9aSdDS4jv2S47HYAOLvcgDtgZOHc');
       const [isKeySet, setIsKeySet] = useState(true);
       
@@ -285,12 +287,14 @@ High visual fidelity to source. This is the same individual/scene, different ang
       const [error, setError] = useState(null);
       const [copied, setCopied] = useState(false);
 
-      // New State variables
       const [isProfileOpen, setIsProfileOpen] = useState(false);
       const [isDarkMode, setIsDarkMode] = useState(false);
+      
+      const [isSaving, setIsSaving] = useState(false);
+      const [saveStatus, setSaveStatus] = useState(null);
 
-      // Close profile menu when clicking outside
       const profileMenuRef = useRef(null);
+      
       useEffect(() => {
         function handleClickOutside(event) {
           if (profileMenuRef.current && !profileMenuRef.current.contains(event.target)) {
@@ -299,15 +303,50 @@ High visual fidelity to source. This is the same individual/scene, different ang
         }
         document.addEventListener("mousedown", handleClickOutside);
         return () => document.removeEventListener("mousedown", handleClickOutside);
-      }, [profileMenuRef]);
+      }, []);
 
       const toggleDarkMode = () => {
         setIsDarkMode(!isDarkMode);
-        if (!isDarkMode) {
-          document.documentElement.classList.add('dark');
-        } else {
-          document.documentElement.classList.remove('dark');
+        if (!isDarkMode) document.documentElement.classList.add('dark');
+        else document.documentElement.classList.remove('dark');
+      };
+
+      // Firestore Workspace Load
+      useEffect(() => {
+        const loadWorkspace = async () => {
+          try {
+            const userDocRef = window.firebaseDoc(window.firebaseDb, 'users', user.uid);
+            const docSnap = await window.getDoc(userDocRef);
+            if (docSnap.exists()) {
+              const data = docSnap.data();
+              if (data.uploadedImage) setUploadedImage(data.uploadedImage);
+              if (data.mediaType) setMediaType(data.mediaType);
+              if (data.blueprint) setBlueprint(data.blueprint);
+              if (data.angleRequest) setAngleRequest(data.angleRequest);
+              if (data.currentPrompt) setCurrentPrompt(data.currentPrompt);
+              if (data.apiKey) { setApiKey(data.apiKey); setIsKeySet(true); }
+            }
+          } catch (e) {
+            console.error("Error loading workspace:", e);
+          }
+        };
+        loadWorkspace();
+      }, [user.uid]);
+
+      const handleSave = async () => {
+        setIsSaving(true);
+        try {
+          const userDocRef = window.firebaseDoc(window.firebaseDb, 'users', user.uid);
+          await window.setDoc(userDocRef, {
+            uploadedImage, mediaType, blueprint, angleRequest, currentPrompt, apiKey
+          }, { merge: true });
+          setSaveStatus('Workspace Saved!');
+          setTimeout(() => setSaveStatus(null), 3000);
+        } catch (e) {
+          console.error("Error saving workspace:", e);
+          setSaveStatus('Failed to save');
         }
+        setIsSaving(false);
       };
 
       const handleImageUpload = (e) => {
@@ -327,7 +366,7 @@ High visual fidelity to source. This is the same individual/scene, different ang
           setError(null);
           
           if (!isKeySet || !apiKey) {
-            setError("Please save your Google API Key first.");
+            setError("Please set your Gemini API Key first.");
             return;
           }
 
@@ -360,14 +399,6 @@ High visual fidelity to source. This is the same individual/scene, different ang
         }
       };
 
-      const copyToClipboard = () => {
-        if (currentPrompt) {
-          navigator.clipboard.writeText(currentPrompt);
-          setCopied(true);
-          setTimeout(() => setCopied(false), 2000);
-        }
-      };
-
       const formatKey = (key) => {
         const formatted = key.replace(/([A-Z])/g, ' $1');
         return formatted.charAt(0).toUpperCase() + formatted.slice(1);
@@ -376,7 +407,7 @@ High visual fidelity to source. This is the same individual/scene, different ang
       return (
         <React.Fragment>
           {/* Floating Sidebar */}
-          <div className="w-20 shrink-0 flex flex-col justify-between py-2 apple-enter relative z-[100]">
+          <div className="w-20 shrink-0 flex flex-col justify-between py-2 apple-enter relative z-[100] h-full">
             <div className="bg-white dark:bg-darkWhite rounded-[2rem] py-6 flex flex-col items-center gap-8 shadow-sm transition-colors duration-500">
               <div className="w-12 h-12 bg-cardDark dark:bg-darkCardDark rounded-full flex items-center justify-center text-accentYellow shadow-md cursor-pointer transition-colors duration-500">
                  <HomeIcon />
@@ -392,40 +423,34 @@ High visual fidelity to source. This is the same individual/scene, different ang
               </div>
             </div>
             
-            {/* Profile Dropdown Container */}
             <div className="relative" ref={profileMenuRef}>
               <div 
                 onClick={() => setIsProfileOpen(!isProfileOpen)}
                 className="bg-white/80 dark:bg-darkWhite/80 backdrop-blur-xl rounded-[2rem] py-4 flex flex-col items-center shadow-sm cursor-pointer hover:bg-white dark:hover:bg-darkWhite apple-transition hover:scale-105 active:scale-95"
               >
                  <div className="w-10 h-10 rounded-full overflow-hidden border-2 border-dashBg dark:border-darkInput">
-                   <img src="https://api.dicebear.com/7.x/notionists/svg?seed=Felix&backgroundColor=ffcf54" alt="Avatar" />
+                   <img src={user.photoURL || "https://api.dicebear.com/7.x/notionists/svg?seed=Felix&backgroundColor=ffcf54"} alt="Avatar" />
                  </div>
               </div>
 
               {isProfileOpen && (
                 <div className="absolute bottom-0 left-20 ml-4 w-60 bg-white/95 dark:bg-darkWhite/95 backdrop-blur-xl rounded-[1.5rem] p-3 shadow-2xl border border-gray-100 dark:border-white/5 apple-enter z-50 transition-colors duration-500">
                    <div className="px-3 py-2 mb-2 border-b border-gray-100 dark:border-gray-800">
-                     <p className="text-[14px] font-bold text-textMain dark:text-white">Vishnu Sharma</p>
-                     <p className="text-[12px] font-medium text-textMuted">Free Tier</p>
+                     <p className="text-[14px] font-bold text-textMain dark:text-white truncate">{user.displayName || "User"}</p>
+                     <p className="text-[12px] font-medium text-textMuted truncate">{user.email}</p>
                    </div>
                    
-                   <button className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-dashBg dark:hover:bg-darkInput text-textMain dark:text-white text-[13px] font-semibold apple-transition">
-                     <SettingsIcon className="w-4 h-4 text-gray-400" />
-                     Settings
+                   <button onClick={handleSave} className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-dashBg dark:hover:bg-darkInput text-textMain dark:text-white text-[13px] font-semibold apple-transition">
+                     <CloudIcon className="w-4 h-4 text-gray-400" />
+                     {isSaving ? 'Saving...' : saveStatus ? saveStatus : 'Save Workspace'}
                    </button>
                    
                    <button onClick={toggleDarkMode} className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-dashBg dark:hover:bg-darkInput text-textMain dark:text-white text-[13px] font-semibold apple-transition">
                      {isDarkMode ? <SunIcon /> : <MoonIcon />}
                      {isDarkMode ? 'Light Mode' : 'Night Mode'}
                    </button>
-
-                   <button className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-accentYellow/10 dark:hover:bg-accentYellow/10 text-amber-500 text-[13px] font-bold apple-transition mt-1">
-                     <CrownIcon />
-                     Upgrade to Premium
-                   </button>
                    
-                   <button className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-red-50 dark:hover:bg-red-500/10 text-red-500 text-[13px] font-semibold apple-transition mt-2 border-t border-gray-100 dark:border-gray-800 pt-3">
+                   <button onClick={onLogout} className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-red-50 dark:hover:bg-red-500/10 text-red-500 text-[13px] font-semibold apple-transition mt-2 border-t border-gray-100 dark:border-gray-800 pt-3">
                      <LogOutIcon />
                      Log Out
                    </button>
@@ -434,10 +459,7 @@ High visual fidelity to source. This is the same individual/scene, different ang
             </div>
           </div>
           
-          {/* Main Content Container */}
-          <div className="flex-1 flex flex-col h-full overflow-hidden ml-2 apple-enter apple-delay-1">
-            
-            {/* Header */}
+          <div className="flex-1 flex flex-col h-full overflow-hidden ml-2 apple-enter apple-delay-1 pl-0">
             <div className="flex justify-between items-end mb-6 shrink-0">
               <div>
                 <h1 className="text-[28px] font-bold text-textMain dark:text-white leading-tight">Consistency Studio</h1>
@@ -451,7 +473,7 @@ High visual fidelity to source. This is the same individual/scene, different ang
                        <SearchIcon className="text-gray-400 mr-3"/>
                        <input 
                          type="password" 
-                         placeholder="Google API Key (AIza...)" 
+                         placeholder="Gemini API Key (AIza...)" 
                          className="bg-transparent border-none outline-none text-[15px] w-64 placeholder-gray-400 text-textMain dark:text-white"
                          value={apiKey}
                          onChange={(e) => setApiKey(e.target.value)}
@@ -461,7 +483,7 @@ High visual fidelity to source. This is the same individual/scene, different ang
                       onClick={() => apiKey.length > 10 && setIsKeySet(true)}
                       className="bg-cardDark dark:bg-darkInput text-white px-7 py-3 rounded-full text-[15px] font-semibold hover:bg-black dark:hover:bg-gray-800 apple-transition shadow-md hover:shadow-lg hover:scale-105 active:scale-95"
                     >
-                      Save Key
+                      Set Key
                     </button>
                   </React.Fragment>
                 ) : (
@@ -487,11 +509,9 @@ High visual fidelity to source. This is the same individual/scene, different ang
               </div>
             )}
             
-            {/* Scrollable Dashboard Grid */}
             <div className="flex-1 overflow-auto custom-scrollbar pr-4 pb-4">
               <div className="grid grid-cols-1 xl:grid-cols-12 gap-6 auto-rows-min">
                 
-                {/* TOP LEFT: Upload & Reference (Sand Card) */}
                 <div className="xl:col-span-7 bg-cardSand dark:bg-darkCardSand rounded-[2rem] p-8 flex flex-col relative overflow-hidden shadow-sm min-h-[360px] z-10 group apple-enter apple-delay-2 apple-transition hover:shadow-lg hover:-translate-y-1 transition-colors duration-500">
                   <div className="blob-yellow"></div>
                   <div className="blob-pink"></div>
@@ -537,13 +557,12 @@ High visual fidelity to source. This is the same individual/scene, different ang
                   </div>
                 </div>
                 
-                {/* TOP RIGHT: Output Prompt (Dark Card) */}
                 <div className="xl:col-span-5 bg-cardDark dark:bg-darkCardDark rounded-[2rem] p-8 text-white flex flex-col shadow-xl min-h-[360px] apple-enter apple-delay-3 apple-transition hover:shadow-2xl hover:-translate-y-1 transition-colors duration-500">
                   <div className="flex justify-between items-center mb-6">
                     <h2 className="text-xl font-bold">Generated Prompt</h2>
                     {currentPrompt && (
                       <button 
-                        onClick={copyToClipboard}
+                        onClick={() => { navigator.clipboard.writeText(currentPrompt); setCopied(true); setTimeout(() => setCopied(false), 2000); }}
                         className="bg-[#383a40] hover:bg-[#4b4e55] dark:bg-[#1a1c20] dark:hover:bg-[#252830] text-white px-4 py-2 rounded-full text-[13px] font-bold transition-colors flex items-center gap-2"
                       >
                         {copied ? <React.Fragment><CheckIcon/> Copied</React.Fragment> : <React.Fragment><CopyIcon/> Copy text</React.Fragment>}
@@ -562,21 +581,16 @@ High visual fidelity to source. This is the same individual/scene, different ang
                         <div className="h-3 w-4/5 skeleton-line-dark"></div>
                       </div>
                     ) : currentPrompt ? (
-                      <p className="text-[14px] leading-relaxed text-gray-300 whitespace-pre-wrap selection:bg-accentYellow selection:text-black">
-                        {currentPrompt}
-                      </p>
+                      <p className="text-[14px] leading-relaxed text-gray-300 whitespace-pre-wrap selection:bg-accentYellow selection:text-black">{currentPrompt}</p>
                     ) : (
                       <div className="h-full flex flex-col items-center justify-center text-[#555a64]">
-                        <div className="w-12 h-12 rounded-full border-2 border-[#383a40] dark:border-gray-800 flex items-center justify-center mb-3">
-                          <LayersIcon />
-                        </div>
+                        <div className="w-12 h-12 rounded-full border-2 border-[#383a40] dark:border-gray-800 flex items-center justify-center mb-3"><LayersIcon /></div>
                         <span className="text-[14px] font-medium">Prompt will appear here</span>
                       </div>
                     )}
                   </div>
                 </div>
                 
-                {/* BOTTOM LEFT: Consistency Blueprint (White Card) */}
                 <div className="xl:col-span-7 bg-white/90 dark:bg-darkWhite/90 backdrop-blur-md rounded-[2rem] p-8 shadow-sm flex flex-col min-h-[400px] apple-enter apple-delay-3 apple-transition hover:shadow-lg hover:-translate-y-1 transition-colors duration-500">
                   <div className="flex justify-between items-center mb-6">
                     <h2 className="text-xl font-bold text-textMain dark:text-white flex items-center gap-3">
@@ -589,18 +603,13 @@ High visual fidelity to source. This is the same individual/scene, different ang
                     {isAnalyzing ? (
                       Array(6).fill(0).map((_, i) => (
                         <div key={i} className="bg-dashBg dark:bg-darkInput rounded-2xl p-5 border border-transparent">
-                           <div className="h-3 w-1/3 skeleton-line mb-3"></div>
-                           <div className="h-2 w-full skeleton-line mb-2"></div>
-                           <div className="h-2 w-4/5 skeleton-line"></div>
+                           <div className="h-3 w-1/3 skeleton-line mb-3"></div><div className="h-2 w-full skeleton-line mb-2"></div><div className="h-2 w-4/5 skeleton-line"></div>
                         </div>
                       ))
                     ) : blueprint ? (
                       Object.entries(blueprint).map(([key, value]) => (
                         <div key={key} className="bg-dashBg dark:bg-darkInput rounded-2xl p-5 hover:bg-gray-100 dark:hover:bg-[#2a2d36] transition-colors border border-transparent">
-                          <h4 className="text-[13px] font-bold text-textMain dark:text-white mb-1.5 flex items-center gap-2">
-                            <div className="w-1.5 h-1.5 rounded-full bg-accentYellow"></div>
-                            {formatKey(key)}
-                          </h4>
+                          <h4 className="text-[13px] font-bold text-textMain dark:text-white mb-1.5 flex items-center gap-2"><div className="w-1.5 h-1.5 rounded-full bg-accentYellow"></div>{formatKey(key)}</h4>
                           <p className="text-[14px] text-textMuted dark:text-gray-400 leading-snug line-clamp-3 hover:line-clamp-none transition-all">{value}</p>
                         </div>
                       ))
@@ -612,33 +621,26 @@ High visual fidelity to source. This is the same individual/scene, different ang
                   </div>
                 </div>
                 
-                {/* BOTTOM RIGHT: Angle Request (White Card) */}
                 <div className="xl:col-span-5 bg-white/90 dark:bg-darkWhite/90 backdrop-blur-md rounded-[2rem] p-8 shadow-sm flex flex-col min-h-[400px] apple-enter apple-delay-4 apple-transition hover:shadow-lg hover:-translate-y-1 transition-colors duration-500">
                   <h2 className="text-xl font-bold text-textMain dark:text-white mb-6">Request New Angle</h2>
-                  
                   <div className="flex flex-wrap gap-2 mb-5">
                     {PresetAngles.map(angle => (
                       <button 
-                        key={angle}
-                        onClick={() => setAngleRequest(angle)}
+                        key={angle} onClick={() => setAngleRequest(angle)}
                         className={`text-[13px] font-semibold px-4 py-2 rounded-full transition-all ${angleRequest === angle ? 'bg-cardDark dark:bg-darkInput text-white shadow-md scale-105' : 'bg-dashBg dark:bg-darkInput text-textMuted dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700 hover:text-textMain dark:hover:text-white'}`}
                       >
                         {angle}
                       </button>
                     ))}
                   </div>
-
                   <textarea 
-                    value={angleRequest}
-                    onChange={(e) => setAngleRequest(e.target.value)}
+                    value={angleRequest} onChange={(e) => setAngleRequest(e.target.value)}
                     placeholder="Describe specific changes (e.g. 'cinematic close up of the face, looking left')..."
                     className="flex-1 w-full bg-dashBg dark:bg-darkInput rounded-[1.5rem] p-5 text-[15px] font-medium text-textMain dark:text-white focus:outline-none focus:ring-2 focus:ring-accentYellow resize-none custom-scrollbar placeholder-gray-400 dark:placeholder-gray-500 mb-5 transition-colors duration-500"
                     disabled={!blueprint}
                   />
-
                   <button 
-                    onClick={handleGenerate}
-                    disabled={!blueprint || !angleRequest.trim() || isGenerating}
+                    onClick={handleGenerate} disabled={!blueprint || !angleRequest.trim() || isGenerating}
                     className="w-full bg-accentYellow hover:bg-[#f7c236] disabled:bg-dashBg dark:disabled:bg-darkInput disabled:text-gray-400 dark:disabled:text-gray-600 text-cardDark font-bold py-4 rounded-full apple-transition text-[16px] shadow-sm hover:shadow-md hover:scale-[1.02] active:scale-[0.98]"
                   >
                     {isGenerating ? 'Generating Prompt...' : 'Generate Perfect Prompt'}
@@ -648,6 +650,47 @@ High visual fidelity to source. This is the same individual/scene, different ang
               </div>
             </div>
           </div>
+        </React.Fragment>
+      );
+    }
+
+    // App Component (Router)
+    function App() {
+      const [user, setUser] = useState(undefined);
+      const [currentPage, setCurrentPage] = useState('landing');
+      const [firebaseReady, setFirebaseReady] = useState(!!window.firebaseAuth);
+
+      useEffect(() => {
+        if (!firebaseReady) {
+          const handler = () => setFirebaseReady(true);
+          window.addEventListener('firebase-ready', handler);
+          return () => window.removeEventListener('firebase-ready', handler);
+        }
+      }, [firebaseReady]);
+
+      useEffect(() => {
+        if (!firebaseReady) return;
+        const unsubscribe = window.onAuthStateChanged(window.firebaseAuth, (u) => {
+          if (u) {
+            setUser(u);
+            setCurrentPage('dashboard');
+          } else {
+            setUser(null);
+            if (currentPage === 'dashboard') setCurrentPage('landing');
+          }
+        });
+        return () => unsubscribe();
+      }, [firebaseReady]);
+
+      if (user === undefined || !firebaseReady) {
+        return <div className="h-full w-full flex items-center justify-center"><div className="w-12 h-12 border-4 border-accentYellow border-t-transparent rounded-full animate-spin"></div></div>;
+      }
+
+      return (
+        <React.Fragment>
+          {currentPage === 'landing' && <Landing onGetStarted={() => setCurrentPage('login')} />}
+          {currentPage === 'login' && <Login onBack={() => setCurrentPage('landing')} />}
+          {currentPage === 'dashboard' && <Dashboard user={user} onLogout={() => window.signOut(window.firebaseAuth)} />}
         </React.Fragment>
       );
     }
